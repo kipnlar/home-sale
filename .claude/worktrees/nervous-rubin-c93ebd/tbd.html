@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Moving Sale – Coming Soon (TBD)</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet"/>
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FAF7F2; --warm-white: #FFFDF9; --ink: #1A1612;
+      --brown: #6B4F3A; --rust: #C05A2A; --gold: #D4A843;
+      --sage: #7A8C6E; --light-brown: #E8DDD4; --sold-bg: #F0EDE8;
+    }
+    body { font-family: "DM Sans", sans-serif; background: var(--cream); color: var(--ink); }
+
+    .hero { background: var(--ink); color: var(--cream); padding: 64px 24px 52px; text-align: center; position: relative; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(212,168,67,0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, rgba(192,90,42,0.12) 0%, transparent 50%); }
+    .hero-eyebrow { font-weight: 500; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; position: relative; }
+    .hero h1 { font-family: "Playfair Display", serif; font-size: clamp(42px,7vw,80px); font-weight: 900; line-height: 1.05; position: relative; margin-bottom: 16px; }
+    .hero h1 span { color: var(--gold); }
+    .hero-sub { font-size: 16px; font-weight: 300; color: rgba(250,247,242,0.75); max-width: 560px; margin: 0 auto 32px; line-height: 1.65; position: relative; }
+    .hero-badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; position: relative; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 100px; font-size: 12px; font-weight: 500; }
+    .badge-now { background: var(--sage); color: #fff; }
+    .badge-tbd { background: var(--brown); color: #fff; }
+    .badge-sold { background: rgba(255,255,255,0.07); color: rgba(250,247,242,0.45); border: 1px solid rgba(255,255,255,0.1); text-decoration: line-through; }
+
+    .instructions { background: var(--light-brown); border-left: 4px solid var(--gold); margin: 32px auto; max-width: 900px; padding: 20px 28px; border-radius: 0 8px 8px 0; font-size: 14px; line-height: 1.7; color: var(--brown); }
+    .instructions strong { color: var(--ink); }
+    .instructions-alert { background: #FFF8EC; border-left-color: var(--rust); margin-top: 12px; }
+    .hero-updated { font-size: 11px; font-weight: 400; color: rgba(250,247,242,0.45); letter-spacing: 1px; margin-bottom: 20px; position: relative; }
+
+
+    .container { max-width: 960px; margin: 0 auto; padding: 0 20px 60px; }
+
+    .section { margin-bottom: 52px; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .section-icon { width: 42px; height: 42px; background: var(--ink); color: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .section-title { font-family: "Playfair Display", serif; font-size: 26px; font-weight: 700; }
+    .section-line { flex: 1; height: 1px; background: var(--light-brown); }
+
+    .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+
+    .item-card { background: var(--warm-white); border: 1px solid #E5DDD5; border-radius: 14px; overflow: hidden; transition: transform 0.18s ease, box-shadow 0.18s ease; position: relative; display: flex; flex-direction: column; }
+    .item-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(26,22,18,0.09); }
+    .item-card.sold { opacity: 0.55; pointer-events: none; }
+    .item-card:has(.when-now) { border-top: 3px solid var(--sage); }
+    .item-card:has(.when-tbd) { border-top: 3px solid var(--gold); }
+    .item-card.sold::after { content: "SOLD"; position: absolute; top: 10px; right: 10px; background: #888; color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 2px; padding: 3px 8px; border-radius: 100px; z-index: 2; }
+
+    .item-photo { width: 100%; background: #f5f0eb; overflow: hidden; }
+    .item-photo img { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .item-photo.multi { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .item-photo.multi img { height: 140px; }
+    .item-photo-placeholder { width: 100%; height: 120px; background: #f5f0eb; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #a89880; font-style: italic; }
+
+    .item-body { padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .item-name { font-weight: 500; font-size: 15px; line-height: 1.4; color: var(--ink); flex: 1; }
+    .item-name a { color: var(--rust); text-decoration: none; border-bottom: 1px solid rgba(192,90,42,0.25); }
+    .item-name a:hover { border-color: var(--rust); }
+    .item-note { font-size: 12px; color: #8A7A6E; line-height: 1.5; font-style: italic; }
+    .item-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+    .item-price { font-family: "Playfair Display", serif; font-size: 20px; font-weight: 700; color: var(--brown); }
+    .item-price.tbd-price { font-size: 14px; font-weight: 400; font-family: "DM Sans", sans-serif; color: #999; }
+    .when-pill { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
+    .when-now { background: var(--sage); color: #fff; }
+    .when-tbd { background: var(--brown); color: #fff; }
+
+    .contact-strip { background: var(--ink); color: var(--cream); text-align: center; padding: 44px 24px; margin-top: 16px; }
+    .contact-strip h2 { font-family: "Playfair Display", serif; font-size: 28px; margin-bottom: 10px; }
+    .contact-strip p { font-size: 14px; color: rgba(250,247,242,0.65); max-width: 480px; margin: 0 auto; line-height: 1.7; }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    .section { animation: fadeUp 0.5s ease both; }
+    .section:nth-child(1){animation-delay:0.05s} .section:nth-child(2){animation-delay:0.12s}
+    .section:nth-child(3){animation-delay:0.19s} .section:nth-child(4){animation-delay:0.26s}
+    @media(max-width:600px){.items-grid{grid-template-columns:1fr}.hero{padding:44px 16px 40px}}
+  
+    /* ── Lightbox ── */
+    #lb-overlay {
+      display: none; position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.88);
+      align-items: center; justify-content: center;
+      cursor: zoom-out;
+      padding: 20px;
+    }
+    #lb-overlay.open { display: flex; }
+    #lb-overlay img {
+      max-width: 90vw; max-height: 90vh;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      cursor: zoom-out;
+    }
+    #lb-close {
+      position: fixed; top: 18px; right: 22px;
+      color: #fff; font-size: 32px; line-height: 1;
+      cursor: pointer; user-select: none; z-index: 10000;
+      background: rgba(0,0,0,0.4); border-radius: 50%;
+      width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body>
+<div class="hero">
+<div class="hero-eyebrow">Larry &amp; Kip's Moving Sale</div>
+<h1>Moving Sale – <span>Coming Soon</span></h1>
+<p class="hero-sub">These items will be available just before we move. Reserve one now and we'll mark it pre-sold with your initials!</p>
+<p class="hero-updated">Last updated: April 4, 2026</p>
+<div class="hero-badges"><span class="badge badge-tbd">● Available TBD</span></div>
+</div>
+<div class="instructions"><p><strong>TBD Items:</strong> These items will be available just before we move (date to be announced). You can commit to any item now and we'll mark it pre-sold with your initials. <strong><a href="index.html">← Back to items available now</a></strong></p></div>
+<div class="instructions" style="border-left-color: var(--sage); margin-top: 12px;">
+<strong>📬 To claim an item:</strong> Email us at <a href="mailto:kipnlar@gmail.com" style="color: var(--brown); font-weight: 600;">kipnlar@gmail.com</a> — we'll arrange a pickup time and share our address. Payment via <strong>Zelle</strong> or <strong>Cash</strong>. Buyer pickup at our home.
+</div>
+<div class="container">
+<!-- APPLIANCES -->
+<div class="section">
+<div class="section-header">
+<div class="section-icon">🍳</div>
+<h2 class="section-title">Appliances</h2>
+<div class="section-line"></div>
+</div>
+<div class="items-grid">
+
+
+
+
+
+
+
+<div class="item-card">
+<div class="item-photo multi"><img src="photos/LGWasher.jpeg" data-large-src="photos/LGWasher.jpeg" alt="LG Washer" style="cursor:zoom-in"/><img src="photos/LGDryer.jpeg" data-large-src="photos/LGDryer.jpeg" alt="LG Gas Dryer" style="cursor:zoom-in"/></div>
+<div class="item-body">
+<div class="item-name"><a href="https://www.lg.com/us/washers-dryers/lg-wm9000hva-front-load-washer" target="_blank">LG Washer &amp; LG Gas Dryer</a></div>
+<div class="item-footer">
+<div class="item-price">$1,400</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+<div class="item-card">
+<div class="item-photo"><img src="photos/LGRefrigerator.jpeg" data-large-src="photos/LGRefrigerator.jpeg" alt="LG French Door Refrigerator" style="cursor:zoom-in"/></div>
+<div class="item-body">
+<div class="item-name"><a href="https://www.lg.com/us/business/refrigerators/lg-lrfds3016s" target="_blank">LG 30 cu. ft. French Door Refrigerator (LRFDS3016S)</a></div>
+<div class="item-footer">
+<div class="item-price">$1,500</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+<div class="item-card">
+<div class="item-photo-placeholder">Photo coming soon</div>
+<div class="item-body">
+<div class="item-name"><a href="https://beatbot.com/products/aquasense-2-ultra" target="_blank">Beatbot AquaSense 2 Ultra Pool Vacuum (NA-2025)</a></div>
+<div class="item-footer">
+<div class="item-price">$1,500</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- FURNITURE -->
+<div class="section">
+<div class="section-header">
+<div class="section-icon">🛋️</div>
+<h2 class="section-title">Furniture</h2>
+<div class="section-line"></div>
+</div>
+<div class="items-grid">
+
+
+
+
+
+
+
+<div class="item-card">
+<div class="item-photo"><img alt="" data-large-src="photos/primary_nightstands_large.jpeg" src="photos/primary_nightstands_thumb.jpeg" style="cursor:zoom-in"/></div>
+<div class="item-body">
+<div class="item-name">Primary Bedroom Night Stands (set of 2)</div>
+<div class="item-footer">
+<div class="item-price">$300</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div class="item-card">
+<div class="item-photo multi"><img alt="" data-large-src="photos/savannah_loveseat_large1.jpeg" src="photos/savannah_loveseat_thumb1.jpeg" style="cursor:zoom-in"/><img alt="" data-large-src="photos/savannah_loveseat_large2.jpeg" src="photos/savannah_loveseat_thumb2.jpeg" style="cursor:zoom-in"/></div>
+<div class="item-body">
+<div class="item-name">Mathis Brothers Savannah Power Reclining Love Seat — Headrests, USB Chargers, Storage &amp; Cup Holders</div>
+<div class="item-footer">
+<div class="item-price">$700</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+
+
+
+<div class="item-card">
+<div class="item-photo"><img alt="" data-large-src="photos/standing_desk_large.jpeg" src="photos/standing_desk_thumb.jpeg" style="cursor:zoom-in"/></div>
+<div class="item-body">
+<div class="item-name">Height Adjustable Standing Desk</div>
+<div class="item-footer">
+<div class="item-price">$300</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+<div class="item-card">
+<div class="item-photo-placeholder">Photo coming soon</div>
+<div class="item-body">
+<div class="item-name"><a href="https://www.upliftdesk.com/uplift-v2-standing-desk-v2-or-v2-commercial/" target="_blank">UPLIFT V2 Standing Desk — 60" × 30" Dark Rubberwood, Black Frame</a></div>
+<div class="item-note">Includes advanced keypad, CPU holder, desk drawer, cable channel & surge protector. Originally $1,181.</div>
+<div class="item-footer">
+<div class="item-price">$700</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+<div class="item-card">
+<div class="item-photo-placeholder">Photo coming soon</div>
+<div class="item-body">
+<div class="item-name"><a href="https://www.amazon.com/dp/B0855ZBPXD" target="_blank">HUANUO 17–32" Dual Monitor Stand — Vertical Mount, Tilt/Swivel/Rotate, VESA 75/100mm</a></div>
+<div class="item-footer">
+<div class="item-price">$35</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+<div class="item-card">
+<div class="item-photo-placeholder">Photo coming soon</div>
+<div class="item-body">
+<div class="item-name"><a href="https://www.amazon.com/dp/B07PGL2WVS" target="_blank">LG 27UL500-W 27" 4K UHD IPS Monitor — FreeSync, HDR10, HDMI & DisplayPort (×2)</a></div>
+<div class="item-note">Selling as a pair — $150 each or $250 for both. Originally $214 each new.</div>
+<div class="item-footer">
+<div class="item-price tbd-price">Price TBD</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+
+
+</div>
+</div>
+<!-- ACCESSORIES -->
+<div class="section">
+<div class="section-header">
+<div class="section-icon">🖼️</div>
+<h2 class="section-title">Accessories &amp; Décor</h2>
+<div class="section-line"></div>
+</div>
+<div class="items-grid">
+
+
+
+
+
+
+
+
+
+
+</div>
+</div>
+<!-- MISCELLANEOUS -->
+<div class="section">
+<div class="section-header">
+<div class="section-icon">🔧</div>
+<h2 class="section-title">Miscellaneous</h2>
+<div class="section-line"></div>
+</div>
+<div class="items-grid">
+
+
+
+
+<div class="item-card">
+<div class="item-photo-placeholder">Photo coming soon</div>
+<div class="item-body">
+<div class="item-name"><a href="https://www.homedepot.com/pep/RIDGID-14-Gallon-6-0-Peak-HP-NXT-Wet-Dry-Shop-Vacuum-with-Fine-Dust-Filter-Hose-Accessories-and-Premium-Car-Cleaning-Kit-HD1401/308343494" target="_blank">RIDGID 14 Gallon 6.0 HP NXT Wet/Dry Shop Vacuum with Accessories &amp; Car Cleaning Kit</a></div>
+<div class="item-footer">
+<div class="item-price">$75</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+<div class="item-card">
+<div class="item-photo-placeholder">Photo coming soon</div>
+<div class="item-body">
+<div class="item-name">Musclerack Metal Shelving</div>
+<div class="item-footer">
+<div class="item-price">$100</div>
+<span class="when-pill when-tbd">TBD</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- HOLIDAY DÉCOR -->
+
+</div>
+<div class="contact-strip">
+<h2>Interested in Something?</h2>
+<p>Reach out to us directly to claim an item, ask questions, or arrange pickup. TBD items can be reserved now — we'll mark them pre-sold with your initials.</p>
+<p style="margin-top:16px;">📧 <a href="mailto:kipnlar@gmail.com" style="color:var(--gold);text-decoration:none;">kipnlar@gmail.com</a></p>
+<p style="margin-top:8px;font-size:13px;">Payment via <strong style="color:var(--cream);">Zelle</strong> or <strong style="color:var(--cream);">Cash</strong> · Buyer pickup at our home (address provided when you arrange a time)</p>
+</div>
+<!-- Lightbox -->
+<div aria-label="Full-size image" aria-modal="true" id="lb-overlay" role="dialog">
+<span aria-label="Close" id="lb-close" title="Close">✕</span>
+<img alt="Full-size view" id="lb-img" src=""/>
+</div>
+<script>
+(function(){
+  var overlay = document.getElementById('lb-overlay');
+  var lbImg   = document.getElementById('lb-img');
+  var close   = document.getElementById('lb-close');
+
+  function openLB(src) {
+    lbImg.src = src;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLB() {
+    overlay.classList.remove('open');
+    lbImg.src = '';
+    document.body.style.overflow = '';
+  }
+
+  // Attach clicks to all photo images that have data-large-src
+  document.querySelectorAll('.item-photo img[data-large-src]').forEach(function(img){
+    img.addEventListener('click', function(e){
+      e.stopPropagation();
+      openLB(img.getAttribute('data-large-src'));
+    });
+  });
+
+  // Close on overlay click (outside image) or close button
+  overlay.addEventListener('click', closeLB);
+  close.addEventListener('click',   closeLB);
+  lbImg.addEventListener('click',   closeLB);
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeLB();
+  });
+})();
+</script>
+</body>
+</html>
