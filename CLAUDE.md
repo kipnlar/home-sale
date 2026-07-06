@@ -7,51 +7,81 @@
 
 ## Page Structure (index.html and tbd.html)
 
+The site uses the **"Porch Market"** design system: bold rounded cards, a
+photo-forward grid, and pill-shaped price/status badges that overlap the
+photo — designed to feel like a friendly mobile marketplace app.
+
 ### Document Head
-- Google Fonts CDN: Playfair Display (700, 900) + DM Sans (300, 400, 500)
+- No external font CDN — body font is the system sans stack
+  (`-apple-system, "Segoe UI", Helvetica, Arial, sans-serif`)
 - All CSS is inline in a `<style>` block — no external stylesheet
 
 ### CSS Color Variables
 ```css
---cream: #FAF7F2        /* page background */
---warm-white: #FFFDF9   /* item card background */
---ink: #1A1612          /* dark text, hero bg, section icons */
---brown: #6B4F3A        /* TBD pill, item price, some text */
---rust: #C05A2A         /* links, alert borders */
---gold: #D4A843         /* hero accents, Now borders, section icon color */
---sage: #7A8C6E         /* Now pill, Now card top border */
---light-brown: #E8DDD4  /* section divider lines, instruction bg */
---sold-bg: #F0EDE8      /* (defined but card uses opacity instead) */
+--cloud:     #EFF3EF   /* page background */
+--card:      #FFFFFF   /* item card / info block background */
+--charcoal:  #202A24   /* nav bg, section icons, TBD pill, sold pill, contact card bg */
+--leaf:      #3F7D53   /* primary accent — Now pill, links, hero gradient, CTA button */
+--leafdark:  #2E5D3E   /* hero gradient dark stop, link hover */
+--coral:     #E1633D   /* price pill */
+--line:      #DCE4DC   /* hairline borders */
+--muted:     #6E7A70   /* secondary text (notes) */
+--mutedsoft: #95A198   /* placeholder text */
 ```
 
 ### Hero Section
 ```html
 <div class="hero">
-  <div class="hero-eyebrow">Larry &amp; Kip's Moving Sale</div>
-  <h1>Moving Sale – <span>Everything Must Go!</span></h1>
-  <p class="hero-sub">...</p>
-  <p class="hero-updated">Last updated: Month DD, YYYY</p>  <!-- UPDATE THIS -->
-  <div class="hero-badges">...</div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Larry &amp; Kip's Moving Sale</div>
+    <h1>Moving Sale<em>Everything Must Go</em></h1>
+    <p class="hero-sub">...</p>
+    <p class="hero-updated">Last updated: Month DD, YYYY</p>  <!-- UPDATE THIS -->
+    <div class="hero-badges">
+      <span class="badge">🟢 <span id="avail-count">0</span> available</span>
+      <span class="badge">💬 Email to claim</span>
+    </div>
+  </div>
 </div>
 ```
-- `<h1 span>` renders in gold
+- `<h1 em>` renders as a block on its own line (not italic)
 - `hero-updated` is the "Last updated" line — **always update to today's date when items change**
+- `#avail-count` is filled in automatically by the inline script (counts
+  `.item-card:not(.sold)`) — never hardcode this number
 
 ### Instructions Blocks (between hero and container)
-- Gold-left-border block explaining how the sale works; links to tbd.html
-- Sage-left-border block with contact info (kipnlar@gmail.com, Zelle/Cash)
+- Two rounded white cards floating just below the hero: one explaining how the sale works (links to tbd.html), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
+
+### Category Filter Chips
+A horizontally-scrollable chip bar sits between the info blocks and the
+sections. Clicking a chip shows only the matching `.section[data-cat]`;
+"All" shows everything. Chips and section `data-cat` values must match:
+```html
+<div class="cat-bar">
+  <div class="cat-chip active" data-cat="all">All</div>
+  <div class="cat-chip" data-cat="appliances">🍳 Appliances</div>
+  <!-- one chip per section, same order as the sections below -->
+</div>
+```
+The filtering logic lives in the inline `<script>` at the bottom of the
+page and needs no changes when items/sections are added — only when a
+whole new section is introduced (add both the chip and the section's
+`data-cat`).
 
 ### Sections (inside `<div class="container">`)
-Current sections in order, each with icon and title:
-1. 🍳 Appliances
-2. 🛋️ Furniture
-3. 🖼️ Accessories & Décor
-4. 🔧 Miscellaneous
-5. 🎄 Holiday Décor
+Current sections in order, each with icon, title, and a `data-cat` matching its chip:
+1. 🍳 Appliances (`appliances`)
+2. 🛋️ Furniture (`furniture`)
+3. 🖼️ Accessories & Décor (`decor`)
+4. 🔧 Miscellaneous (`misc`)
+5. 🎄 Holiday Décor (`holiday`)
+6. 🏷️ Sold Items (`sold`) — index.html only
+
+tbd.html only has Appliances / Furniture / Miscellaneous chips+sections.
 
 Section HTML pattern:
 ```html
-<div class="section">
+<div class="section" data-cat="appliances">
   <div class="section-header">
     <div class="section-icon">🍳</div>
     <h2 class="section-title">Appliances</h2>
@@ -99,6 +129,13 @@ Full example with all optional elements:
   </div>
 </div>
 ```
+This markup is unchanged from before, but note how CSS now repositions two
+of these pieces purely visually (no HTML changes needed when adding items):
+- `.item-footer` is reordered (`order:-1`) and pulled up with a negative
+  margin so the coral `.item-price` pill overlaps the bottom edge of the
+  photo, even though in the markup it comes after the name/note.
+- `.when-pill` is `position:absolute` to the card's top-right corner, so it
+  reads as a badge over the photo regardless of where it sits in the DOM.
 
 ### Sold Items
 ```html
@@ -108,9 +145,9 @@ Full example with all optional elements:
 <!-- Sold with buyer initials shown in badge -->
 <div class="item-card sold" data-sold-to="MB">
 ```
-- Sold cards get reduced opacity (0.55), pointer-events: none, and a gray "SOLD" pill (top-right)
-- `data-sold-to` appends " · {initials}" to the SOLD badge via CSS `attr()`
-- Card top-border: sage (Now items), gold (TBD items) — controlled by CSS `:has()`
+- Sold cards get reduced opacity (0.5), pointer-events: none, and a dark rounded "Sold" pill (top-right, replaces the when-pill)
+- `data-sold-to` appends " · {initials}" to the Sold badge via CSS `attr()`
+- The `.when-now`/`.when-tbd` pill is hidden on sold cards (`.item-card.sold .when-pill { display:none; }`) so it doesn't clash with the Sold badge
 
 ### Photo Conventions
 - **Single-photo items**: two separate files — a smaller thumbnail (`src`) and a larger full-size (`data-large-src`). Extracted photos use sequential numbering where odd = full-size, even = thumbnail (e.g., photo_1 = large, photo_2 = thumb). This is just how they ended up — new photos can use any filename.
@@ -128,25 +165,29 @@ Full example with all optional elements:
 ### Contact Footer
 ```html
 <div class="contact-strip">
-  <h2>Interested in Something?</h2>
-  <p>...</p>
-  <p>📧 <a href="mailto:kipnlar@gmail.com">kipnlar@gmail.com</a></p>
-  <p>Payment via Zelle or Cash · Buyer pickup at our home</p>
+  <div class="contact-card">
+    <h2>Interested in Something?</h2>
+    <p>...</p>
+    <a class="email-link" href="mailto:kipnlar@gmail.com">kipnlar@gmail.com</a>
+    <p class="payment-note">Payment via <strong>Zelle</strong> or <strong>Cash</strong> · Buyer pickup at our home</p>
+  </div>
 </div>
 ```
+The dark rounded `.contact-card` is the visual block; `.contact-strip` is just a max-width wrapper.
 
 ## Key Conventions
 - Prices: `$75`, `$1,400` (dollar sign, commas for thousands)
-- "Now" items: `when-now` pill (sage green)
-- "TBD" items: `when-tbd` pill (brown), `tbd-price` class on price div if price unknown
-- Multi-photo: `class="item-photo multi"` — 2-column grid, imgs 140px tall
-- Single-photo: `class="item-photo"` — full width, imgs 200px tall
+- "Now" items: `when-now` pill (leaf green)
+- "TBD" items: `when-tbd` pill (dark charcoal), `tbd-price` class on price div if price unknown
+- Multi-photo: `class="item-photo multi"` — 2-column grid, imgs 150px tall
+- Single-photo: `class="item-photo"` — full width, imgs 190px tall
 
 ## Workflow for Adding New Items
 1. Add photo files to `photos/` at the repo root
 2. In the appropriate section in `index.html` (or `tbd.html`), add an item card following the anatomy above
 3. Reference photos as `src="photos/filename.jpeg"` and `data-large-src="photos/filename.jpeg"`
 4. Update the "Last updated" date in the hero section to today's date
+5. If the item belongs to a brand-new section (not one of the existing categories), add both a new `.section[data-cat="..."]` block and a matching `.cat-chip[data-cat="..."]` in the `.cat-bar` — the two `data-cat` values must match exactly, or the filter chip won't show that section
 
 ## Important: Last Updated Date
 Always update this line in the hero section when any item is added, removed, or changed:
