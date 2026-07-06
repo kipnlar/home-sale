@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Moving Sale — Three Site Directions</title>
+<style>
+  :root{
+    --stage-bg:#F7F6F3; --stage-ink:#1B1B18; --stage-mute:#6B6A63; --stage-line:#DEDCD4; --stage-accent:#3B5166; --stage-card:#FFFFFF;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --stage-bg:#17181A; --stage-ink:#EDECE7; --stage-mute:#9A988F; --stage-line:#33342F; --stage-accent:#7DA3BF; --stage-card:#1F2023; }
+  }
+  :root[data-theme="dark"]{ --stage-bg:#17181A; --stage-ink:#EDECE7; --stage-mute:#9A988F; --stage-line:#33342F; --stage-accent:#7DA3BF; --stage-card:#1F2023; }
+  :root[data-theme="light"]{ --stage-bg:#F7F6F3; --stage-ink:#1B1B18; --stage-mute:#6B6A63; --stage-line:#DEDCD4; --stage-accent:#3B5166; --stage-card:#FFFFFF; }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  body{ background:var(--stage-bg); color:var(--stage-ink); font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif; }
+
+  .stage{ max-width:1180px; margin:0 auto; padding:56px 24px 100px; }
+  .stage-head{ max-width:640px; margin:0 auto 40px; text-align:center; }
+  .stage-eyebrow{ font-size:11px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:var(--stage-accent); margin-bottom:14px; }
+  .stage-head h1{ font-size:clamp(28px,4vw,38px); font-weight:700; line-height:1.15; letter-spacing:-0.5px; text-wrap:balance; margin-bottom:14px; }
+  .stage-sub{ font-size:15px; line-height:1.65; color:var(--stage-mute); }
+
+  .stage-tabs{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:8px; position:sticky; top:12px; z-index:50; }
+  .stage-tab{
+    font-family:inherit; font-size:13px; font-weight:600; letter-spacing:0.2px; cursor:pointer;
+    padding:11px 20px; border-radius:99px; border:1px solid var(--stage-line);
+    background:var(--stage-card); color:var(--stage-mute); transition:background .15s,color .15s,border-color .15s;
+  }
+  .stage-tab:hover{ color:var(--stage-ink); }
+  .stage-tab:focus-visible{ outline:2px solid var(--stage-accent); outline-offset:2px; }
+  .stage-tab.active{ background:var(--stage-ink); color:var(--stage-bg); border-color:var(--stage-ink); }
+  .stage-tab .num{ font-variant-numeric:tabular-nums; opacity:0.55; margin-right:7px; }
+
+  .stage-note{ text-align:center; font-size:12.5px; color:var(--stage-mute); margin:18px 0 36px; }
+
+  .panel{ display:none; border-radius:18px; overflow:hidden; box-shadow:0 1px 2px rgba(0,0,0,0.06); }
+  .panel.active{ display:block; }
+
+  .panel-label{
+    display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+    padding:16px 22px; background:var(--stage-card); border-bottom:1px solid var(--stage-line);
+    font-size:12.5px; color:var(--stage-mute);
+  }
+  .panel-label strong{ color:var(--stage-ink); font-size:13.5px; }
+
+  @media (max-width:640px){
+    .stage{ padding:36px 14px 80px; }
+    .stage-tabs{ position:static; }
+  }
+
+  /* ================================================================
+     MOCKUP A — ESTATE LEDGER
+     ================================================================ */
+  .mock-ledger{
+    --paper:#F6F3EC; --ink:#201C18; --rule:#D9D0C1; --burgundy:#6E2B2B; --moss:#55603F; --muted:#8A7F6D;
+    background:var(--paper); color:var(--ink);
+    font-family:Georgia,"Iowan Old Style","Palatino Linotype",serif;
+    padding:52px 44px 60px;
+  }
+  .mock-ledger .l-eyebrow{
+    font-family:ui-monospace,"SF Mono","Cascadia Code",Menlo,monospace;
+    font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--burgundy);
+    display:flex; align-items:center; gap:14px; margin-bottom:20px;
+  }
+  .mock-ledger .l-eyebrow::after{ content:""; flex:1; height:1px; background:var(--rule); }
+  .mock-ledger h2{ font-size:clamp(34px,5vw,54px); font-weight:400; letter-spacing:-1px; line-height:1.02; margin-bottom:14px; }
+  .mock-ledger .l-sub{
+    font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:12px; color:var(--muted); letter-spacing:0.3px;
+    padding-bottom:26px; border-bottom:1px solid var(--rule); margin-bottom:8px;
+    font-variant-numeric:tabular-nums;
+  }
+  .mock-ledger .l-info{
+    font-family:-apple-system,"Segoe UI",sans-serif; font-size:13px; color:var(--muted); line-height:1.7;
+    padding:20px 0 8px; max-width:640px;
+  }
+  .mock-ledger .l-info a{ color:var(--burgundy); }
+
+  .lot{
+    display:grid; grid-template-columns:48px 168px 1fr 160px; gap:26px;
+    padding:26px 0; border-bottom:1px solid var(--rule); align-items:start;
+  }
+  .lot-num{
+    font-family:ui-monospace,"SF Mono",Menlo,monospace; font-size:22px; color:var(--burgundy);
+    font-variant-numeric:tabular-nums; padding-top:4px;
+  }
+  .lot-photo{ border:1px solid var(--rule); padding:5px; background:var(--paper); }
+  .lot-photo img{ width:100%; height:118px; object-fit:cover; display:block; }
+  .lot-photo.multi{ display:flex; flex-direction:column; gap:5px; }
+  .lot-photo.multi img{ height:56px; }
+  .lot-text .lot-name{ font-size:19px; line-height:1.3; margin-bottom:6px; }
+  .lot-text .lot-name a{ color:var(--ink); text-decoration:underline; text-decoration-color:var(--rule); text-underline-offset:3px; }
+  .lot-text .lot-note{
+    font-family:-apple-system,"Segoe UI",sans-serif; font-style:italic; font-size:12.5px; color:var(--muted); line-height:1.6;
+  }
+  .lot-status{
+    text-align:right; font-family:ui-monospace,"SF Mono",Menlo,monospace; font-variant-numeric:tabular-nums;
+  }
+  .lot-price{ font-size:22px; margin-bottom:8px; }
+  .lot-state{ font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; }
+  .lot-state.now{ color:var(--moss); }
+  .lot-state.tbd{ color:var(--burgundy); }
+  .lot-state.sold{ color:var(--muted); }
+  .lot.is-sold{ opacity:0.45; }
+  .lot.is-sold .lot-name{ text-decoration:line-through; text-decoration-color:var(--muted); }
+  .lot.is-sold .lot-price{ text-decoration:line-through; }
+
+  .mock-ledger .l-foot{
+    margin-top:30px; padding-top:26px; text-align:center;
+    font-family:-apple-system,"Segoe UI",sans-serif; font-size:12px; color:var(--muted); letter-spacing:0.3px;
+  }
+  .mock-ledger .l-foot a{ color:var(--burgundy); font-weight:600; }
+
+  @media (max-width:680px){
+    .mock-ledger{ padding:36px 20px 44px; }
+    .lot{ grid-template-columns:1fr; gap:12px; }
+    .lot-num{ padding-top:0; }
+    .lot-status{ text-align:left; display:flex; align-items:center; gap:14px; }
+    .lot-price{ margin-bottom:0; }
+  }
+
+  /* ================================================================
+     MOCKUP B — PORCH MARKET
+     ================================================================ */
+  .mock-market{
+    --cloud:#EFF3EF; --charcoal:#202A24; --leaf:#3F7D53; --leafdark:#2E5D3E; --coral:#E1633D; --line:#DCE4DC; --card:#FFFFFF;
+    background:var(--cloud); color:var(--charcoal);
+    font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+    padding-bottom:40px;
+  }
+  .mock-market .m-hero{
+    background:linear-gradient(135deg,var(--leaf),var(--leafdark));
+    color:#fff; padding:40px 28px 44px; border-radius:0 0 28px 28px; margin-bottom:22px;
+  }
+  .mock-market .m-hero h2{
+    font-size:clamp(30px,5vw,44px); font-weight:800; letter-spacing:-1px; line-height:1.05; margin-bottom:10px; text-wrap:balance;
+  }
+  .mock-market .m-hero p{ font-size:14px; opacity:0.88; max-width:420px; line-height:1.6; margin-bottom:18px; }
+  .m-chip-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .m-chip{ background:rgba(255,255,255,0.18); padding:7px 14px; border-radius:99px; font-size:11.5px; font-weight:700; letter-spacing:0.3px; }
+
+  .m-cats{
+    display:flex; gap:8px; overflow-x:auto; padding:0 28px 22px; scrollbar-width:none;
+  }
+  .m-cats::-webkit-scrollbar{ display:none; }
+  .m-cat{
+    flex:none; font-size:13px; font-weight:700; padding:9px 18px; border-radius:99px; background:var(--card);
+    border:1px solid var(--line); color:var(--charcoal); white-space:nowrap;
+  }
+  .m-cat.active{ background:var(--charcoal); color:#fff; border-color:var(--charcoal); }
+
+  .m-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:18px; padding:0 28px; }
+  .m-card{
+    background:var(--card); border-radius:20px; overflow:hidden; display:flex; flex-direction:column;
+    box-shadow:0 6px 18px rgba(32,42,36,0.07); position:relative;
+  }
+  .m-photo{ position:relative; background:#E3E9E3; }
+  .m-photo img{ width:100%; height:168px; object-fit:cover; display:block; }
+  .m-photo.multi{ display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+  .m-photo.multi img{ height:168px; }
+  .m-price-tag{
+    position:absolute; left:12px; bottom:-14px; background:var(--coral); color:#fff; font-weight:800; font-size:15px;
+    padding:8px 14px; border-radius:99px; box-shadow:0 4px 10px rgba(225,99,61,0.4);
+  }
+  .m-status{
+    position:absolute; top:10px; right:10px; font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase;
+    padding:5px 10px; border-radius:99px; color:#fff;
+  }
+  .m-status.now{ background:var(--leaf); }
+  .m-status.tbd{ background:rgba(32,42,36,0.75); }
+  .m-status.sold{ background:rgba(32,42,36,0.55); }
+  .m-card.is-sold .m-photo img{ filter:grayscale(0.6); opacity:0.6; }
+  .m-card.is-sold .m-name{ opacity:0.5; }
+  .m-body{ padding:22px 16px 16px; flex:1; display:flex; flex-direction:column; gap:6px; }
+  .m-name{ font-weight:700; font-size:14.5px; line-height:1.4; }
+  .m-name a{ color:var(--charcoal); text-decoration:none; border-bottom:2px solid var(--leaf); }
+  .m-note{ font-size:11.5px; color:#6E7A70; line-height:1.55; }
+
+  .m-cta{
+    margin:26px 28px 0; background:var(--charcoal); color:#fff; border-radius:18px;
+    padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  }
+  .m-cta div{ font-size:13px; line-height:1.5; opacity:0.85; }
+  .m-cta a.m-btn{
+    background:var(--leaf); color:#fff; font-weight:700; font-size:13px; padding:11px 20px; border-radius:99px;
+    text-decoration:none; white-space:nowrap;
+  }
+
+  @media (max-width:640px){
+    .mock-market .m-hero,.m-cats,.m-grid{ padding-left:18px; padding-right:18px; }
+    .m-cta{ margin-left:18px; margin-right:18px; }
+  }
+
+  /* ================================================================
+     MOCKUP C — THE WALKTHROUGH
+     ================================================================ */
+  .mock-walk{
+    --sand:#EDE6D6; --ink2:#20242B; --navy:#2F4858; --ochre:#B4802B; --hair:#D8CFB9;
+    background:var(--sand); color:var(--ink2);
+    font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+    font-weight:300;
+    padding:52px 40px 60px;
+  }
+  .mock-walk .w-head{ max-width:560px; margin-bottom:44px; }
+  .mock-walk .w-eyebrow{
+    font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--navy); margin-bottom:16px; font-weight:600;
+  }
+  .mock-walk h2{
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif; font-style:italic; font-weight:400;
+    font-size:clamp(32px,5vw,50px); line-height:1.06; letter-spacing:-0.5px; color:var(--ink2); margin-bottom:16px; text-wrap:balance;
+  }
+  .mock-walk .w-sub{ font-size:14.5px; line-height:1.8; color:#565049; }
+  .mock-walk .w-sub a{ color:var(--navy); font-weight:500; }
+
+  .w-feature{ position:relative; border-radius:2px; overflow:hidden; margin-bottom:8px; }
+  .w-feature img{ width:100%; height:min(52vw,420px); object-fit:cover; display:block; }
+  .w-feature::after{
+    content:""; position:absolute; inset:0; background:linear-gradient(to top,rgba(20,20,15,0.72),transparent 55%);
+  }
+  .w-feature-cap{ position:absolute; left:0; right:0; bottom:0; padding:26px 30px; color:#F5F1E6; }
+  .w-feature-cap .w-name{
+    font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif; font-style:italic; font-size:clamp(22px,3vw,30px); margin-bottom:8px;
+  }
+  .w-feature-cap .w-line{ font-size:12.5px; letter-spacing:0.3px; display:flex; gap:16px; align-items:baseline; opacity:0.92; }
+  .w-feature-cap .w-price{ font-size:16px; font-weight:500; }
+
+  .w-caption-row{ display:flex; gap:16px; padding:14px 2px 46px; border-bottom:1px solid var(--hair); margin-bottom:40px; font-size:12px; color:#726B60; }
+
+  .w-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:34px 26px; }
+  .w-item{ display:flex; flex-direction:column; }
+  .w-item.tall{ grid-row:span 2; }
+  .w-item .w-photo{ margin-bottom:14px; }
+  .w-item .w-photo img{ width:100%; height:190px; object-fit:cover; display:block; }
+  .w-item.tall .w-photo img{ height:404px; }
+  .w-item.diptych .w-photo{ display:grid; grid-template-columns:1fr 1fr; gap:4px; }
+  .w-item.diptych .w-photo img{ height:190px; }
+  .w-cap-name{ font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif; font-style:italic; font-size:17px; margin-bottom:5px; }
+  .w-cap-name a{ color:var(--ink2); }
+  .w-cap-note{ font-size:11.5px; color:#726B60; line-height:1.6; margin-bottom:8px; }
+  .w-cap-meta{
+    display:flex; align-items:baseline; justify-content:space-between; gap:10px; font-size:12.5px;
+    padding-top:8px; border-top:1px solid var(--hair);
+    font-variant-numeric:tabular-nums;
+  }
+  .w-cap-meta .w-price2{ font-weight:500; }
+  .w-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; position:relative; top:-1px; }
+  .w-dot.now{ background:var(--ochre); }
+  .w-dot.tbd{ background:none; border:1.5px solid var(--ochre); }
+  .w-dot.sold{ background:#A7A093; }
+  .w-item.is-sold{ opacity:0.5; }
+  .w-item.is-sold .w-cap-name{ text-decoration:line-through; }
+
+  @media (max-width:760px){
+    .mock-walk{ padding:36px 18px 44px; }
+    .w-grid{ grid-template-columns:1fr 1fr; }
+    .w-item.tall{ grid-row:auto; }
+    .w-item.tall .w-photo img{ height:190px; }
+  }
+  @media (max-width:480px){
+    .w-grid{ grid-template-columns:1fr; }
+  }
+
+  #lb-overlay{ display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.9); align-items:center; justify-content:center; cursor:zoom-out; padding:20px; }
+  #lb-overlay.open{ display:flex; }
+  #lb-overlay img{ max-width:90vw; max-height:88vh; object-fit:contain; border-radius:4px; box-shadow:0 28px 80px rgba(0,0,0,0.6); }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <div class="stage-head">
+    <p class="stage-eyebrow">Design Review — Larry &amp; Kip's Moving Sale</p>
+    <h1>Three directions for the site</h1>
+    <p class="stage-sub">Same eight real listings, three different systems. All three are responsive, support photos with descriptions, and handle Now / TBD / Sold states — the difference is the personality. Tap an item's photo to zoom.</p>
+  </div>
+
+  <div class="stage-tabs" role="tablist">
+    <button class="stage-tab active" data-target="ledger" role="tab" aria-selected="true"><span class="num">A</span>Estate Ledger</button>
+    <button class="stage-tab" data-target="market" role="tab" aria-selected="false"><span class="num">B</span>Porch Market</button>
+    <button class="stage-tab" data-target="walk" role="tab" aria-selected="false"><span class="num">C</span>The Walkthrough</button>
+  </div>
+  <p class="stage-note" id="stage-caption">Structured &amp; unhurried — reads like a numbered auction catalog.</p>
+
+  <!-- ============================================================
+       PANEL A — ESTATE LEDGER
+       ============================================================ -->
+  <section class="panel active" id="panel-ledger">
+    <div class="panel-label"><span><strong>A — Estate Ledger</strong> · catalog-style, numbered lots, quiet serif</span></div>
+    <div class="mock-ledger">
+      <div class="l-eyebrow">Catalog No. 3</div>
+      <h2>Everything Must Go</h2>
+      <div class="l-sub">Updated 06 Jul 2026 &nbsp;·&nbsp; 8 of 8 lots shown &nbsp;·&nbsp; Larry &amp; Kip's Moving Sale</div>
+      <div class="l-info">Items below are ready for pickup now. Email to claim a lot — we'll arrange a time and share the address. Payment via <a href="#">Zelle</a> or cash.</div>
+
+      <div class="lot">
+        <div class="lot-num">01</div>
+        <div class="lot-photo"><img src="photos/velvet_sleeper_sofa_thumb.jpeg" alt=""/></div>
+        <div class="lot-text">
+          <div class="lot-name"><a href="#">Homary King Velvet Convertible Sleeper Sofa</a> — 79", Green Velvet, Gold Legs</div>
+          <div class="lot-note">Originally $1,339.99 · converts to a king bed in 30 seconds · hidden storage drawers</div>
+        </div>
+        <div class="lot-status"><div class="lot-price">$650</div><div class="lot-state now">Available</div></div>
+      </div>
+
+      <div class="lot">
+        <div class="lot-num">02</div>
+        <div class="lot-photo"><img src="photos/upholstered_arm_chairs_thumb.jpeg" alt=""/></div>
+        <div class="lot-text">
+          <div class="lot-name"><a href="#">AllModern Jace Upholstered Arm Chairs</a> — Set of 2, Sunday Dark Gray</div>
+          <div class="lot-note">Originally $370 · mid-century, walnut legs · stain-resistant polyester</div>
+        </div>
+        <div class="lot-status"><div class="lot-price">$150</div><div class="lot-state now">Available</div></div>
+      </div>
+
+      <div class="lot">
+        <div class="lot-num">03</div>
+        <div class="lot-photo"><img src="photos/wood_c_side_table_thumb.jpeg" alt=""/></div>
+        <div class="lot-text">
+          <div class="lot-name">Hand-Crafted Wood C-Style Side Table</div>
+        </div>
+        <div class="lot-status"><div class="lot-price">$50</div><div class="lot-state now">Available</div></div>
+      </div>
+
+      <div class="lot">
+        <div class="lot-num">04</div>
+        <div class="lot-photo"><img src="photos/round_mirror_thumb.jpeg" alt=""/></div>
+        <div class="lot-text">
+          <div class="lot-name"><a href="#">Gold Aluminum Round Wall Mirror</a> — 30", Slim Frame</div>
+          <div class="lot-note">Originally $79.99 · 10.4 lbs, ready to hang</div>
+        </div>
+        <div class="lot-status"><div class="lot-price">$50</div><div class="lot-state now">Available</div></div>
+      </div>
+
+      <div class="lot">
+        <div class="lot-num">05</div>
+        <div class="lot-photo"><img src="photos/bar_stools_thumb.jpeg" alt=""/></div>
+        <div class="lot-text">
+          <div class="lot-name"><a href="#">Noah Swivel Counter Stools</a> — Set of 2, Cognac Faux Leather</div>
+          <div class="lot-note">Originally $298 · 360° swivel · counter height</div>
+        </div>
+        <div class="lot-status"><div class="lot-price">$200</div><div class="lot-state now">Available</div></div>
+      </div>
+
+      <div class="lot">
+        <div class="lot-num">06</div>
+        <div class="lot-photo multi"><img src="photos/christmas_tree_1.jpeg" alt=""/><img src="photos/christmas_tree_2.jpeg" alt=""/></div>
+        <div class="lot-text">
+          <div class="lot-name">10 ft Slim Artificial Christmas Tree (Kingswood Fir) + Storage Bag</div>
+          <div class="lot-note">Originally $190 combined</div>
+        </div>
+        <div class="lot-status"><div class="lot-price">$100</div><div class="lot-state now">Available</div></div>
+      </div>
+
+      <div class="lot">
+        <div class="lot-num">07</div>
+        <div class="lot-photo"><img src="photos/standing_desk_thumb.jpeg" alt=""/></div>
+        <div class="lot-text">
+          <div class="lot-name">Height Adjustable Standing Desk</div>
+          <div class="lot-note">Available just before the move — reserve now, we'll mark it held</div>
+        </div>
+        <div class="lot-status"><div class="lot-price">$300</div><div class="lot-state tbd">TBD</div></div>
+      </div>
+
+      <div class="lot is-sold">
+        <div class="lot-num">08</div>
+        <div class="lot-photo"><img src="photos/throw_pillows_thumb.jpeg" alt=""/></div>
+        <div class="lot-text">
+          <div class="lot-name">Throw Pillows — Various styles &amp; sizes</div>
+        </div>
+        <div class="lot-status"><div class="lot-price">Sold</div><div class="lot-state sold">to J.T.</div></div>
+      </div>
+
+      <div class="l-foot">Questions? <a href="#">kipnlar@gmail.com</a> — buyer pickup at our home.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PANEL B — PORCH MARKET
+       ============================================================ -->
+  <section class="panel" id="panel-market">
+    <div class="panel-label"><span><strong>B — Porch Market</strong> · mobile-first, bold, app-like</span></div>
+    <div class="mock-market">
+      <div class="m-hero">
+        <h2>Moving Sale</h2>
+        <p>Larry &amp; Kip are moving — browse what's up for grabs and message us to claim it. Pickup at our place.</p>
+        <div class="m-chip-row">
+          <div class="m-chip">🟢 7 available</div>
+          <div class="m-chip">💬 Email to claim</div>
+        </div>
+      </div>
+
+      <div class="m-cats">
+        <div class="m-cat active">All</div>
+        <div class="m-cat">Furniture</div>
+        <div class="m-cat">Décor</div>
+        <div class="m-cat">Appliances</div>
+        <div class="m-cat">Holiday</div>
+      </div>
+
+      <div class="m-grid">
+        <div class="m-card">
+          <div class="m-photo"><img src="photos/velvet_sleeper_sofa_thumb.jpeg" alt=""/><span class="m-status now">Available</span><span class="m-price-tag">$650</span></div>
+          <div class="m-body">
+            <div class="m-name"><a href="#">Homary Velvet Sleeper Sofa</a>, Green</div>
+            <div class="m-note">Converts to king bed in 30 seconds · hidden storage</div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-photo"><img src="photos/upholstered_arm_chairs_thumb.jpeg" alt=""/><span class="m-status now">Available</span><span class="m-price-tag">$150</span></div>
+          <div class="m-body">
+            <div class="m-name"><a href="#">Jace Arm Chairs</a>, Set of 2</div>
+            <div class="m-note">Mid-century, walnut legs, dark gray</div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-photo"><img src="photos/wood_c_side_table_thumb.jpeg" alt=""/><span class="m-status now">Available</span><span class="m-price-tag">$50</span></div>
+          <div class="m-body">
+            <div class="m-name">Wood C-Style Side Table</div>
+            <div class="m-note">Hand-crafted, slides under a sofa arm</div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-photo"><img src="photos/round_mirror_thumb.jpeg" alt=""/><span class="m-status now">Available</span><span class="m-price-tag">$50</span></div>
+          <div class="m-body">
+            <div class="m-name"><a href="#">Round Wall Mirror</a>, 30" Gold</div>
+            <div class="m-note">Slim frame, ready to hang</div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-photo"><img src="photos/bar_stools_thumb.jpeg" alt=""/><span class="m-status now">Available</span><span class="m-price-tag">$200</span></div>
+          <div class="m-body">
+            <div class="m-name"><a href="#">Swivel Counter Stools</a>, Set of 2</div>
+            <div class="m-note">Cognac faux leather, 360° swivel</div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-photo multi"><img src="photos/christmas_tree_1.jpeg" alt=""/><img src="photos/christmas_tree_2.jpeg" alt=""/><span class="m-status now">Available</span><span class="m-price-tag">$100</span></div>
+          <div class="m-body">
+            <div class="m-name">10 ft Christmas Tree + Bag</div>
+            <div class="m-note">Kingswood Fir, slim profile</div>
+          </div>
+        </div>
+        <div class="m-card">
+          <div class="m-photo"><img src="photos/standing_desk_thumb.jpeg" alt=""/><span class="m-status tbd">TBD</span><span class="m-price-tag">$300</span></div>
+          <div class="m-body">
+            <div class="m-name">Standing Desk</div>
+            <div class="m-note">Available just before the move</div>
+          </div>
+        </div>
+        <div class="m-card is-sold">
+          <div class="m-photo"><img src="photos/throw_pillows_thumb.jpeg" alt=""/><span class="m-status sold">Sold</span></div>
+          <div class="m-body">
+            <div class="m-name">Throw Pillows</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="m-cta">
+        <div>Found something you want?<br/>We reply fast.</div>
+        <a class="m-btn" href="#">✉ Email to claim</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PANEL C — THE WALKTHROUGH
+       ============================================================ -->
+  <section class="panel" id="panel-walk">
+    <div class="panel-label"><span><strong>C — The Walkthrough</strong> · editorial, photo-led, quiet type</span></div>
+    <div class="mock-walk">
+      <div class="w-head">
+        <div class="w-eyebrow">Larry &amp; Kip · Moving Sale</div>
+        <h2>A last look through the house</h2>
+        <p class="w-sub">Everything below is ready for pickup now. Write to <a href="#">kipnlar@gmail.com</a> to claim something — Zelle or cash, pickup at our place.</p>
+      </div>
+
+      <div class="w-feature">
+        <img src="photos/velvet_sleeper_sofa_thumb.jpeg" alt=""/>
+        <div class="w-feature-cap">
+          <div class="w-name">Homary Velvet Convertible Sleeper Sofa</div>
+          <div class="w-line"><span>79" · Green Velvet · Gold Legs · converts to king in 30 seconds</span></div>
+        </div>
+      </div>
+      <div class="w-caption-row">
+        <span><span class="w-dot now"></span>Available</span>
+        <span class="w-price2">$650</span>
+        <span>Originally $1,339.99</span>
+      </div>
+
+      <div class="w-grid">
+        <div class="w-item tall">
+          <div class="w-photo"><img src="photos/upholstered_arm_chairs_thumb.jpeg" alt=""/></div>
+          <div class="w-cap-name"><a href="#">Jace Upholstered Arm Chairs</a>, Set of 2</div>
+          <div class="w-cap-note">Mid-century, walnut legs, stain-resistant polyester, Sunday Dark Gray</div>
+          <div class="w-cap-meta"><span><span class="w-dot now"></span>Available</span><span class="w-price2">$150</span></div>
+        </div>
+        <div class="w-item">
+          <div class="w-photo"><img src="photos/wood_c_side_table_thumb.jpeg" alt=""/></div>
+          <div class="w-cap-name">Wood C-Style Side Table</div>
+          <div class="w-cap-meta"><span><span class="w-dot now"></span>Available</span><span class="w-price2">$50</span></div>
+        </div>
+        <div class="w-item">
+          <div class="w-photo"><img src="photos/round_mirror_thumb.jpeg" alt=""/></div>
+          <div class="w-cap-name"><a href="#">Round Wall Mirror</a>, 30" Gold</div>
+          <div class="w-cap-note">Slim frame, ready to hang</div>
+          <div class="w-cap-meta"><span><span class="w-dot now"></span>Available</span><span class="w-price2">$50</span></div>
+        </div>
+        <div class="w-item">
+          <div class="w-photo"><img src="photos/bar_stools_thumb.jpeg" alt=""/></div>
+          <div class="w-cap-name"><a href="#">Swivel Counter Stools</a>, Set of 2</div>
+          <div class="w-cap-note">Cognac faux leather, 360° swivel</div>
+          <div class="w-cap-meta"><span><span class="w-dot now"></span>Available</span><span class="w-price2">$200</span></div>
+        </div>
+        <div class="w-item diptych">
+          <div class="w-photo"><img src="photos/christmas_tree_1.jpeg" alt=""/><img src="photos/christmas_tree_2.jpeg" alt=""/></div>
+          <div class="w-cap-name">10 ft Christmas Tree + Storage Bag</div>
+          <div class="w-cap-note">Kingswood Fir, slim profile</div>
+          <div class="w-cap-meta"><span><span class="w-dot now"></span>Available</span><span class="w-price2">$100</span></div>
+        </div>
+        <div class="w-item">
+          <div class="w-photo"><img src="photos/standing_desk_thumb.jpeg" alt=""/></div>
+          <div class="w-cap-name">Standing Desk</div>
+          <div class="w-cap-note">Available just before the move</div>
+          <div class="w-cap-meta"><span><span class="w-dot tbd"></span>TBD</span><span class="w-price2">$300</span></div>
+        </div>
+        <div class="w-item is-sold">
+          <div class="w-photo"><img src="photos/throw_pillows_thumb.jpeg" alt=""/></div>
+          <div class="w-cap-name">Throw Pillows</div>
+          <div class="w-cap-meta"><span><span class="w-dot sold"></span>Sold to J.T.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div aria-label="Full-size image" aria-modal="true" id="lb-overlay" role="dialog">
+  <img alt="" id="lb-img" src=""/>
+</div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.stage-tab');
+  var panels = { ledger: document.getElementById('panel-ledger'), market: document.getElementById('panel-market'), walk: document.getElementById('panel-walk') };
+  var captions = {
+    ledger: "Structured & unhurried — reads like a numbered auction catalog.",
+    market: "Friendly & tactile — built for browsing on a phone, tap-to-claim.",
+    walk: "Quiet & photo-led — feels like a magazine feature on the house."
+  };
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+      Object.keys(panels).forEach(function(k){ panels[k].classList.remove('active'); });
+      tab.classList.add('active'); tab.setAttribute('aria-selected','true');
+      panels[tab.getAttribute('data-target')].classList.add('active');
+      document.getElementById('stage-caption').textContent = captions[tab.getAttribute('data-target')];
+    });
+  });
+
+  var overlay = document.getElementById('lb-overlay');
+  var lbImg = document.getElementById('lb-img');
+  function openLB(src){ lbImg.src = src; overlay.classList.add('open'); }
+  function closeLB(){ overlay.classList.remove('open'); lbImg.src = ''; }
+  document.addEventListener('click', function(e){
+    var img = e.target.closest('.lot-photo img, .m-photo img, .w-photo img, .w-feature img');
+    if (img) { openLB(img.src); return; }
+    if (e.target === overlay) closeLB();
+  });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLB(); });
+})();
+</script>
+</body>
+</html>
