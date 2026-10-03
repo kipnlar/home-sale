@@ -2,7 +2,7 @@
 
 ## Folder Structure
 - `index.html` — "Available Now" sale page (served via GitHub Pages at repo root)
-- `tbd.html` — "Available 10/26" items page (nav label "Available 10/26"; linked from index.html; items available starting October 26). The filename is still `tbd.html` and its cards still use the `when-tbd` "TBD" pill.
+- `tbd.html` — "Available 10/26" items page (nav label "Available 10/26"; linked from index.html; items available starting October 26). The filename is still `tbd.html` and its cards use the `when-tbd` class with the pill text "10/26".
 - `photos/` — all item photos, referenced from both HTML files as `photos/filename`
 
 ## Page Structure (index.html and tbd.html)
@@ -20,7 +20,7 @@ photo — designed to feel like a friendly mobile marketplace app.
 ```css
 --cloud:     #EFF3EF   /* page background */
 --card:      #FFFFFF   /* item card / info block background */
---charcoal:  #202A24   /* nav bg, section icons, TBD pill, contact card bg */
+--charcoal:  #202A24   /* nav bg, section icons, 10/26 pill, contact card bg */
 --leaf:      #3F7D53   /* primary accent — Now pill, links, hero gradient, CTA button */
 --leafdark:  #2E5D3E   /* hero gradient dark stop, link hover */
 --coral:     #E1633D   /* price pill */
@@ -122,7 +122,7 @@ Full example with all optional elements:
 
       <span class="when-pill when-now">Now</span>
       <!-- OR: -->
-      <span class="when-pill when-tbd">TBD</span>
+      <span class="when-pill when-tbd">10/26</span>
     </div>
   </div>
 </div>
@@ -169,7 +169,7 @@ The dark rounded `.contact-card` is the visual block; `.contact-strip` is just a
 ## Key Conventions
 - Prices: `$75`, `$1,400` (dollar sign, commas for thousands)
 - "Now" items: `when-now` pill (leaf green)
-- "TBD" items: `when-tbd` pill (dark charcoal), `tbd-price` class on price div if price unknown
+- "Available 10/26" items: `when-tbd` pill (text "10/26") (dark charcoal), `tbd-price` class on price div if price unknown
 - Multi-photo: `class="item-photo multi"` — 2-column grid, imgs 150px tall
 - Single-photo: `class="item-photo"` — full width, imgs 190px tall
 
