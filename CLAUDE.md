@@ -2,11 +2,10 @@
 
 ## Folder Structure
 - `index.html` — "Available Now" sale page (served via GitHub Pages at repo root)
-- `tbd.html` — "TBD" items page (linked from index.html; items available just before move)
-- `sold.html` — "Sold" archive page (linked from index.html and tbd.html; every item that's been marked sold lives here, not on the other two pages)
-- `photos/` — all item photos, referenced from all three HTML files as `photos/filename`
+- `tbd.html` — "Available 10/26" items page (nav label "Available 10/26"; linked from index.html; items available starting October 26). The filename is still `tbd.html` and its cards still use the `when-tbd` "TBD" pill.
+- `photos/` — all item photos, referenced from both HTML files as `photos/filename`
 
-## Page Structure (index.html, tbd.html, and sold.html)
+## Page Structure (index.html and tbd.html)
 
 The site uses the **"Porch Market"** design system: bold rounded cards, a
 photo-forward grid, and pill-shaped price/status badges that overlap the
@@ -21,7 +20,7 @@ photo — designed to feel like a friendly mobile marketplace app.
 ```css
 --cloud:     #EFF3EF   /* page background */
 --card:      #FFFFFF   /* item card / info block background */
---charcoal:  #202A24   /* nav bg, section icons, TBD pill, sold pill, contact card bg */
+--charcoal:  #202A24   /* nav bg, section icons, TBD pill, contact card bg */
 --leaf:      #3F7D53   /* primary accent — Now pill, links, hero gradient, CTA button */
 --leafdark:  #2E5D3E   /* hero gradient dark stop, link hover */
 --coral:     #E1633D   /* price pill */
@@ -51,7 +50,7 @@ photo — designed to feel like a friendly mobile marketplace app.
   `.item-card:not(.sold)`) — never hardcode this number
 
 ### Instructions Blocks (between hero and container)
-- Two rounded white cards floating just below the hero: one explaining how the sale works (links to tbd.html), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
+- Two rounded white cards floating just below the hero: one explaining how the sale works (links to tbd.html, "Available 10/26"), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
 
 ### Category Filter Chips
 A horizontally-scrollable chip bar sits between the info blocks and the
@@ -75,14 +74,8 @@ Current sections in `index.html`, in order, each with icon, title, and a `data-c
 2. 🛋️ Furniture (`furniture`)
 3. 🖼️ Accessories & Décor (`decor`)
 4. 🔧 Miscellaneous (`misc`)
-5. 🎄 Holiday Décor (`holiday`)
 
 tbd.html only has Appliances / Furniture / Miscellaneous chips+sections.
-
-`sold.html` has no cat-bar/chips — it's a single flat "🏷️ Sold Items" section
-(no `data-cat`) holding every sold item from across the site. When an item on
-index.html or tbd.html sells, move its card here rather than leaving it in
-place with a `sold` class.
 
 Section HTML pattern:
 ```html
@@ -101,7 +94,7 @@ Section HTML pattern:
 ### Item Card Anatomy
 Full example with all optional elements:
 ```html
-<div class="item-card">                          <!-- add "sold" class if sold -->
+<div class="item-card">
   <!-- Option A: single photo -->
   <div class="item-photo">
     <img src="photos/photo_2.jpeg" data-large-src="photos/photo_1.jpeg" alt="" style="cursor:zoom-in"/>
@@ -143,21 +136,9 @@ of these pieces purely visually (no HTML changes needed when adding items):
   reads as a badge over the photo regardless of where it sits in the DOM.
 
 ### Sold Items
-```html
-<!-- Basic sold -->
-<div class="item-card sold">
-
-<!-- Sold with buyer initials shown in badge -->
-<div class="item-card sold" data-sold-to="MB">
-```
-- Sold cards get reduced opacity (0.5), pointer-events: none, and a dark rounded "Sold" pill (top-right, replaces the when-pill)
-- `data-sold-to` appends " · {initials}" to the Sold badge via CSS `attr()`
-- The `.when-now`/`.when-tbd` pill is hidden on sold cards (`.item-card.sold .when-pill { display:none; }`) so it doesn't clash with the Sold badge
-- **Sold items live on `sold.html`, not on `index.html`/`tbd.html`.** When an
-  item sells, cut its card from wherever it was, add the `sold` class (and
-  `data-sold-to` if known), and paste it into the `.items-grid` in
-  `sold.html`'s single section. Don't leave `sold`-classed cards sitting in
-  the Appliances/Furniture/etc. sections on the other two pages.
+There is no Sold page. When an item sells, delete its card from `index.html`
+or `tbd.html` entirely. (The CSS for a `sold` card class still exists in the
+stylesheets but is unused.)
 
 ### Photo Conventions
 - **Single-photo items**: two separate files — a smaller thumbnail (`src`) and a larger full-size (`data-large-src`). Extracted photos use sequential numbering where odd = full-size, even = thumbnail (e.g., photo_1 = large, photo_2 = thumb). This is just how they ended up — new photos can use any filename.
@@ -200,9 +181,8 @@ The dark rounded `.contact-card` is the visual block; `.contact-strip` is just a
 5. If the item belongs to a brand-new section (not one of the existing categories), add both a new `.section[data-cat="..."]` block and a matching `.cat-chip[data-cat="..."]` in the `.cat-bar` — the two `data-cat` values must match exactly, or the filter chip won't show that section
 
 ## Workflow for Marking an Item Sold
-1. Find the item's card in `index.html` or `tbd.html` and remove it from that page entirely
-2. Paste the same card into the `.items-grid` in `sold.html`, adding the `sold` class (and `data-sold-to="XX"` if you know the buyer's initials)
-3. Update the "Last updated" date in the hero section of whichever page(s) you edited (including `sold.html`)
+1. Remove the item's card from `index.html` or `tbd.html` entirely
+2. Update the "Last updated" date in the hero section of whichever page(s) you edited
 
 ## Important: Last Updated Date
 Always update this line in the hero section when any item is added, removed, or changed:
