@@ -2,10 +2,10 @@
 
 ## Folder Structure
 - `index.html` — "Available Now" sale page (served via GitHub Pages at repo root)
-- `tbd.html` — "Available 10/26" items page (nav label "Available 10/26"; linked from index.html; items available starting October 26). The filename is still `tbd.html` and its cards use the `when-tbd` class with the pill text "10/26".
-- `photos/` — all item photos, referenced from both HTML files as `photos/filename`
+- `tbd.html` — just a redirect stub to `index.html` (old shared links); the site is now a single page. Don't add items here.
+- `photos/` — all item photos, referenced from `index.html` as `photos/filename`
 
-## Page Structure (index.html and tbd.html)
+## Page Structure (index.html)
 
 The site uses the **"Porch Market"** design system: bold rounded cards, a
 photo-forward grid, and pill-shaped price/status badges that overlap the
@@ -20,7 +20,7 @@ photo — designed to feel like a friendly mobile marketplace app.
 ```css
 --cloud:     #EFF3EF   /* page background */
 --card:      #FFFFFF   /* item card / info block background */
---charcoal:  #202A24   /* nav bg, section icons, 10/26 pill, contact card bg */
+--charcoal:  #202A24   /* section icons, 10/26 pill, contact card bg */
 --leaf:      #3F7D53   /* primary accent — Now pill, links, hero gradient, CTA button */
 --leafdark:  #2E5D3E   /* hero gradient dark stop, link hover */
 --coral:     #E1633D   /* price pill */
@@ -50,7 +50,7 @@ photo — designed to feel like a friendly mobile marketplace app.
   `.item-card:not(.sold)`) — never hardcode this number
 
 ### Instructions Blocks (between hero and container)
-- Two rounded white cards floating just below the hero: one explaining how the sale works (links to tbd.html, "Available 10/26"), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
+- Two rounded white cards floating just below the hero: one explaining how the sale works (Now vs. 10/26 items), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
 
 ### Category Filter Chips
 A horizontally-scrollable chip bar sits between the info blocks and the
@@ -74,8 +74,6 @@ Current sections in `index.html`, in order, each with icon, title, and a `data-c
 2. 🛋️ Furniture (`furniture`)
 3. 🖼️ Accessories & Décor (`decor`)
 4. 🔧 Miscellaneous (`misc`)
-
-tbd.html only has Appliances / Furniture / Miscellaneous chips+sections.
 
 Section HTML pattern:
 ```html
@@ -137,7 +135,7 @@ of these pieces purely visually (no HTML changes needed when adding items):
 
 ### Sold Items
 There is no Sold page. When an item sells, delete its card from `index.html`
-or `tbd.html` entirely. (The CSS for a `sold` card class still exists in the
+entirely. (The CSS for a `sold` card class still exists in the
 stylesheets but is unused.)
 
 ### Photo Conventions
@@ -169,19 +167,19 @@ The dark rounded `.contact-card` is the visual block; `.contact-strip` is just a
 ## Key Conventions
 - Prices: `$75`, `$1,400` (dollar sign, commas for thousands)
 - "Now" items: `when-now` pill (leaf green)
-- "Available 10/26" items: `when-tbd` pill (text "10/26") (dark charcoal), `tbd-price` class on price div if price unknown
+- Items available starting October 26: `when-tbd` pill with text "10/26" (dark charcoal), same page and sections as "Now" items; `tbd-price` class on price div if price unknown
 - Multi-photo: `class="item-photo multi"` — 2-column grid, imgs 150px tall
 - Single-photo: `class="item-photo"` — full width, imgs 190px tall
 
 ## Workflow for Adding New Items
 1. Add photo files to `photos/` at the repo root
-2. In the appropriate section in `index.html` (or `tbd.html`), add an item card following the anatomy above
+2. In the appropriate section in `index.html` , add an item card following the anatomy above
 3. Reference photos as `src="photos/filename.jpeg"` and `data-large-src="photos/filename.jpeg"`
 4. Update the "Last updated" date in the hero section to today's date
 5. If the item belongs to a brand-new section (not one of the existing categories), add both a new `.section[data-cat="..."]` block and a matching `.cat-chip[data-cat="..."]` in the `.cat-bar` — the two `data-cat` values must match exactly, or the filter chip won't show that section
 
 ## Workflow for Marking an Item Sold
-1. Remove the item's card from `index.html` or `tbd.html` entirely
+1. Remove the item's card from `index.html` entirely
 2. Update the "Last updated" date in the hero section of whichever page(s) you edited
 
 ## Important: Last Updated Date
