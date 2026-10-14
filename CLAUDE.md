@@ -33,8 +33,8 @@ photo — designed to feel like a friendly mobile marketplace app.
 ```html
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-eyebrow">Larry &amp; Kip's Moving Sale</div>
-    <h1>Moving Sale<em>Everything Must Go</em></h1>
+    <div class="hero-eyebrow">Larry &amp; Kip's</div>
+    <h1>Moving Sale</h1>
     <p class="hero-sub">...</p>
     <p class="hero-updated">Last updated: Month DD, YYYY</p>  <!-- UPDATE THIS -->
     <div class="hero-badges">
@@ -44,7 +44,7 @@ photo — designed to feel like a friendly mobile marketplace app.
   </div>
 </div>
 ```
-- `<h1 em>` renders as a block on its own line (not italic)
+- The `<h1>` can take an optional `<em>` subtitle, which renders as a block on its own line (not italic); it's currently unused
 - `hero-updated` is the "Last updated" line — **always update to today's date when items change**
 - `#avail-count` is filled in automatically by the inline script (counts
   `.item-card:not(.sold)`) — never hardcode this number
