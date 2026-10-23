@@ -70,10 +70,11 @@ whole new section is introduced (add both the chip and the section's
 
 ### Sections (inside `<div class="container">`)
 Current sections in `index.html`, in order, each with icon, title, and a `data-cat` matching its chip:
-1. 🍳 Appliances (`appliances`)
-2. 🛋️ Furniture (`furniture`)
-3. 🖼️ Accessories & Décor (`decor`)
-4. 🔧 Miscellaneous (`misc`)
+1. 🛋️ Furniture (`furniture`)
+2. 🖼️ Accessories & Décor (`decor`)
+3. 🔧 Miscellaneous (`misc`)
+
+Appliances (`appliances`, 🍳) was removed once everything in it sold. If an appliance is listed again, re-add that section and its chip (see "Workflow for Adding New Items", step 5), placing it first.
 
 Section HTML pattern:
 ```html
