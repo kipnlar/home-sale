@@ -20,7 +20,7 @@ photo — designed to feel like a friendly mobile marketplace app.
 ```css
 --cloud:     #EFF3EF   /* page background */
 --card:      #FFFFFF   /* item card / info block background */
---charcoal:  #202A24   /* section icons, 10/26 pill, contact card bg */
+--charcoal:  #202A24   /* section icons, contact card bg */
 --leaf:      #3F7D53   /* primary accent — Now pill, links, hero gradient, CTA button */
 --leafdark:  #2E5D3E   /* hero gradient dark stop, link hover */
 --coral:     #E1633D   /* price pill */
@@ -50,7 +50,7 @@ photo — designed to feel like a friendly mobile marketplace app.
   `.item-card:not(.sold)`) — never hardcode this number
 
 ### Instructions Blocks (between hero and container)
-- Two rounded white cards floating just below the hero: one explaining how the sale works (Now vs. 10/26 items), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
+- Two rounded white cards floating just below the hero: one explaining how the sale works (everything is available now; last day to purchase and pick up is 11/1), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
 
 ### Category Filter Chips
 A horizontally-scrollable chip bar sits between the info blocks and the
@@ -122,8 +122,6 @@ Full example with all optional elements:
       <div class="item-price tbd-price">Price TBD</div>
 
       <span class="when-pill when-now">Now</span>
-      <!-- OR: -->
-      <span class="when-pill when-tbd">10/26</span>
     </div>
   </div>
 </div>
@@ -170,7 +168,7 @@ The dark rounded `.contact-card` is the visual block; `.contact-strip` is just a
 ## Key Conventions
 - Prices: `$75`, `$1,400` (dollar sign, commas for thousands)
 - "Now" items: `when-now` pill (leaf green)
-- Items available starting October 26: `when-tbd` pill with text "10/26" (dark charcoal), same page and sections as "Now" items; `tbd-price` class on price div if price unknown
+- All items are available now. (There used to be a "10/26" availability date with a `when-tbd` pill; it was removed, and the `.when-tbd` CSS is unused.)
 - Multi-photo: `class="item-photo multi"` — 2-column grid, imgs 150px tall
 - Single-photo: `class="item-photo"` — full width, imgs 190px tall
 
