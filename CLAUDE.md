@@ -50,7 +50,7 @@ photo — designed to feel like a friendly mobile marketplace app.
   `.item-card:not(.sold)`) — never hardcode this number
 
 ### Instructions Blocks (between hero and container)
-- Two rounded white cards floating just below the hero: one explaining how the sale works (everything is available now; last day to purchase and pick up is 11/1), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
+- Two rounded white cards floating just below the hero: one explaining how the sale works (everything is available now; prices are as listed or best offer; last day to purchase and pick up is 11/1), one with contact info (kipnlar@gmail.com, Zelle/Cash). Class `sage` on the second just tints it slightly green — it no longer means "left border."
 
 ### Category Filter Chips
 A horizontally-scrollable chip bar sits between the info blocks and the
