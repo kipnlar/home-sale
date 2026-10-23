@@ -74,7 +74,6 @@ Current sections in `index.html`, in order, each with icon, title, and a `data-c
 2. 🛋️ Furniture (`furniture`)
 3. 🖼️ Accessories & Décor (`decor`)
 4. 🔧 Miscellaneous (`misc`)
-5. ✅ Sold (`sold`) — last section, holds every sold item (see "Sold Items"); it has its own chip
 
 Section HTML pattern:
 ```html
@@ -135,17 +134,9 @@ of these pieces purely visually (no HTML changes needed when adding items):
   reads as a badge over the photo regardless of where it sits in the DOM.
 
 ### Sold Items
-Sold items live in the **Sold** section at the bottom of `index.html` (the
-`.section[data-cat="sold"]` block, with a "✅ Sold" chip). A sold card is the
-normal card plus the `sold` class:
-```html
-<div class="item-card sold">                      <!-- basic -->
-<div class="item-card sold" data-sold-to="MB">    <!-- optional buyer initials -->
-```
-- Sold cards are dimmed (opacity 0.5), non-clickable, and show a dark "Sold" pill
-  in place of the Now/10/26 pill; `data-sold-to` appends " · {initials}" to the pill
-- `#avail-count` counts only `.item-card:not(.sold)`, so sold items drop out of the count automatically
-- If a buyer backs out, move the card back to its category section and delete the `sold` class
+There is no Sold section or Sold page. When an item sells, delete its card from
+`index.html` entirely. (The CSS for a `sold` card class still exists in the
+stylesheet but is unused.) If a buyer backs out, restore the card from git history.
 
 ### Photo Conventions
 - **Single-photo items**: two separate files — a smaller thumbnail (`src`) and a larger full-size (`data-large-src`). Extracted photos use sequential numbering where odd = full-size, even = thumbnail (e.g., photo_1 = large, photo_2 = thumb). This is just how they ended up — new photos can use any filename.
@@ -188,9 +179,8 @@ The dark rounded `.contact-card` is the visual block; `.contact-strip` is just a
 5. If the item belongs to a brand-new section (not one of the existing categories), add both a new `.section[data-cat="..."]` block and a matching `.cat-chip[data-cat="..."]` in the `.cat-bar` — the two `data-cat` values must match exactly, or the filter chip won't show that section
 
 ## Workflow for Marking an Item Sold
-1. Cut the item's card from its category section in `index.html`
-2. Add the `sold` class (and `data-sold-to="XX"` if you know the buyer's initials) and paste it into the `.items-grid` of the Sold section
-3. Update the "Last updated" date in the hero section
+1. Remove the item's card from `index.html` entirely
+2. Update the "Last updated" date in the hero section
 
 ## Important: Last Updated Date
 Always update this line in the hero section when any item is added, removed, or changed:
