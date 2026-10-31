@@ -70,13 +70,11 @@ whole new section is introduced (add both the chip and the section's
 
 ### Sections (inside `<div class="container">`)
 Current sections in `index.html`, in order, each with icon, title, and a `data-cat` matching its chip:
-1. 🍳 Appliances (`appliances`)
-2. 🛋️ Furniture (`furniture`)
-3. 💻 Tech & Office (`tech`) — monitors, monitor stands, standing desks, printers, smart lighting
-4. 🖼️ Accessories & Décor (`decor`)
-5. 🔧 Miscellaneous (`misc`)
+1. 🛋️ Furniture (`furniture`)
+2. 💻 Tech & Office (`tech`) — monitors, monitor stands, standing desks, printers, smart lighting
+3. 🔧 Miscellaneous (`misc`)
 
-If every appliance sells, the Appliances section can be removed (section block and chip) rather than left empty; re-add both if an appliance is listed again.
+The Appliances (`appliances`, 🍳) and Accessories & Décor (`decor`, 🖼️) sections were removed once nothing was left in them. A section that empties can be removed (section block and chip) rather than left empty; re-add both if something goes in that category again, keeping the order Appliances, Furniture, Tech & Office, Accessories & Décor, Miscellaneous.
 
 Section HTML pattern:
 ```html
